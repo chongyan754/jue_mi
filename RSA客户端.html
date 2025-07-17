@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>RSA 客户端</title>
+  <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 80px; margin-bottom: 10px; font-family: monospace; }
+    button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+
+  <h2>随机生成的 AES-256 密钥（十进制整数）</h2>
+  <textarea id="aesKey" readonly></textarea>
+  <button onclick="copyText('aesKey')">复制密钥</button>
+
+  <h2>服务器公钥 n（十进制）</h2>
+  <textarea id="publicKeyInput" placeholder="请输入服务器提供的 n 值"></textarea>
+
+  <button onclick="encrypt()">加密</button>
+
+  <h2>RSA 加密后的密文（十进制）</h2>
+  <textarea id="cipherOutput" readonly></textarea>
+  <button onclick="copyText('cipherOutput')">复制密文</button>
+
+  <script>
+    let aesKeyInt;
+
+    // 生成 AES 密钥（256-bit），转为 BigInteger 和十进制展示
+    function generateAESKey() {
+      const aesBytes = forge.random.getBytesSync(32); // 32字节 = 256位
+      const aesHex = forge.util.bytesToHex(aesBytes);
+      aesKeyInt = new forge.jsbn.BigInteger(aesHex, 16);
+      document.getElementById("aesKey").value = aesKeyInt.toString(); // 十进制展示
+    }
+
+    generateAESKey(); // 页面加载时自动生成
+
+    function encrypt() {
+      const nStr = document.getElementById("publicKeyInput").value.trim();
+      if (!nStr) return alert("请输入服务器公钥 n");
+
+      try {
+        const n = new forge.jsbn.BigInteger(nStr);
+        const e = new forge.jsbn.BigInteger('65537'); // 固定 RSA 公钥指数
+
+        // RSA 加密：c = m^e mod n
+        const c = aesKeyInt.modPow(e, n);
+        document.getElementById("cipherOutput").value = c.toString(); // 十进制密文
+      } catch (err) {
+        console.error(err);
+        alert("加密失败，请确认公钥格式正确");
+      }
+    }
+
+    function copyText(id) {
+      const el = document.getElementById(id);
+      el.select();
+      document.execCommand("copy");
+      alert("已复制");
+    }
+  </script>
+
+</body>
+</html>
