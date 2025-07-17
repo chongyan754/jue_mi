@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES-256 加解密工具</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .text-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .key-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        textarea {
+            width: 300px;
+            height: 150px;
+            resize: none;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 14px;
+        }
+        #key {
+            height: 40px;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-area">
+            <label for="plaintext">原文</label>
+            <textarea id="plaintext" placeholder="请输入原文"></textarea>
+            <label for="ciphertext">密文</label>
+            <textarea id="ciphertext" placeholder="请输入密文"></textarea>
+            <div class="buttons">
+                <button onclick="copyText('plaintext')">复制原文</button>
+                <button onclick="copyText('ciphertext')">复制密文</button>
+                <button onclick="encrypt()">加密</button>
+                <button onclick="decrypt()">解密</button>
+            </div>
+        </div>
+        <div class="key-area">
+            <label for="key">密钥</label>
+            <textarea id="key" placeholder="请输入密钥"></textarea>
+        </div>
+    </div>
+
+    <script>
+        function copyText(fieldId) {
+            const textarea = document.getElementById(fieldId);
+            textarea.select();
+            navigator.clipboard.writeText(textarea.value)
+                .then(() => alert(`${fieldId === 'plaintext' ? '原文' : '密文'}已复制！`))
+                .catch(() => alert('复制失败！'));
+        }
+
+        function encrypt() {
+            const plaintext = document.getElementById('plaintext').value;
+            const key = document.getElementById('key').value;
+            if (!plaintext || !key) {
+                alert('请填写原文和密钥！');
+                return;
+            }
+            try {
+                const encrypted = CryptoJS.AES.encrypt(plaintext, key).toString();
+                document.getElementById('ciphertext').value = encrypted;
+            } catch (e) {
+                alert('加密失败，请检查输入！');
+            }
+        }
+
+        function decrypt() {
+            const ciphertext = document.getElementById('ciphertext').value;
+            const key = document.getElementById('key').value;
+            if (!ciphertext || !key) {
+                alert('请填写密文和密钥！');
+                return;
+            }
+            try {
+                const bytes = CryptoJS.AES.decrypt(ciphertext, key);
+                const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                if (!decrypted) {
+                    alert('解密失败，密钥可能错误！');
+                    return;
+                }
+                document.getElementById('plaintext').value = decrypted;
+            } catch (e) {
+                alert('解密失败，请检查输入！');
+            }
+        }
+    </script>
+</body>
+</html>
