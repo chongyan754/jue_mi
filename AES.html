@@ -2,157 +2,224 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AES-256 加解密工具</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面跳转中...</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 10px;
-            background-color: #f0f0f0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: #fff;
             display: flex;
             justify-content: center;
-            align-items: flex-start;
+            align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
+        
         .container {
-            display: flex;
-            flex-direction: column; /* 手机上垂直排列 */
-            gap: 15px;
-            padding: 15px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
             width: 100%;
-            max-width: 600px; /* 限制最大宽度 */
-            box-sizing: border-box;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        .text-area, .key-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-        textarea {
-            width: 100%;
-            height: 120px; /* 减小高度以适应手机屏幕 */
-            resize: none;
-            border: 1px solid #ccc;
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 30px 0;
+            color: #ffeb3b;
+            text-shadow: 0 0 10px rgba(255, 235, 59, 0.5);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 4px;
-            padding: 8px;
-            font-size: 16px; /* 增大字体以提高可读性 */
-            box-sizing: border-box;
+            margin: 30px 0;
+            overflow: hidden;
         }
-        #key {
-            height: 40px;
+        
+        .progress {
+            height: 100%;
+            background: #ffeb3b;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 1s linear;
         }
+        
         .buttons {
             display: flex;
-            flex-direction: row; /* 按钮水平排列 */
-            flex-wrap: wrap; /* 允许按钮换行 */
-            gap: 10px;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
         }
-        button {
-            flex: 1; /* 按钮均分宽度 */
-            padding: 12px;
+        
+        .btn {
+            padding: 12px 30px;
             border: none;
-            border-radius: 4px;
-            background-color: #007bff;
-            color: white;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 16px; /* 增大字体 */
-            min-width: 80px; /* 确保按钮足够宽 */
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
-        button:hover {
-            background-color: #0056b3;
+        
+        .btn-primary {
+            background: #ff5722;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 87, 34, 0.4);
         }
-        label {
-            font-weight: bold;
-            font-size: 16px;
+        
+        .btn-primary:hover {
+            background: #ff7043;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 87, 34, 0.6);
         }
-
-        /* 媒体查询：针对小屏幕优化 */
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffeb3b;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
         @media (max-width: 600px) {
             .container {
-                padding: 10px;
+                padding: 30px 20px;
             }
-            textarea {
-                height: 100px; /* 进一步减小高度 */
-                font-size: 14px;
+            
+            h1 {
+                font-size: 2rem;
             }
-            button {
-                padding: 10px;
-                font-size: 14px;
+            
+            .countdown {
+                font-size: 2.5rem;
             }
-            label {
-                font-size: 14px;
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="text-area">
-            <label for="plaintext">原文</label>
-            <textarea id="plaintext" placeholder="请输入原文"></textarea>
-            <label for="ciphertext">密文</label>
-            <textarea id="ciphertext" placeholder="请输入密文"></textarea>
-            <div class="buttons">
-                <button onclick="copyText('plaintext')">复制原文</button>
-                <button onclick="copyText('ciphertext')">复制密文</button>
-                <button onclick="encrypt()">加密</button>
-                <button onclick="decrypt()">解密</button>
-            </div>
+        <div class="spinner"></div>
+        <h1>页面跳转中</h1>
+        <p>您将在 <span class="countdown" id="countdown">10</span> 秒后自动跳转到目标页面</p>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
         </div>
-        <div class="key-area">
-            <label for="key">密钥</label>
-            <textarea id="key" placeholder="请输入密钥"></textarea>
+        
+        <p>如果您的浏览器没有自动跳转，请点击下面的按钮</p>
+        
+        <div class="buttons">
+            <a href="https://pornhub.com" class="btn btn-primary" id="manualRedirect">立即跳转</a>
+            <button class="btn btn-secondary" id="cancelRedirect">取消跳转</button>
         </div>
     </div>
 
     <script>
-        function copyText(fieldId) {
-            const textarea = document.getElementById(fieldId);
-            textarea.select();
-            navigator.clipboard.writeText(textarea.value)
-                .then(() => alert(`${fieldId === 'plaintext' ? '原文' : '密文'}已复制！`))
-                .catch(() => alert('复制失败！'));
-        }
-
-        function encrypt() {
-            const plaintext = document.getElementById('plaintext').value;
-            const key = document.getElementById('key').value;
-            if (!plaintext || !key) {
-                alert('请填写原文和密钥！');
-                return;
-            }
-            try {
-                const encrypted = CryptoJS.AES.encrypt(plaintext, key).toString();
-                document.getElementById('ciphertext').value = encrypted;
-            } catch (e) {
-                alert('加密失败，请检查输入！');
-            }
-        }
-
-        function decrypt() {
-            const ciphertext = document.getElementById('ciphertext').value;
-            const key = document.getElementById('key').value;
-            if (!ciphertext || !key) {
-                alert('请填写密文和密钥！');
-                return;
-            }
-            try {
-                const bytes = CryptoJS.AES.decrypt(ciphertext, key);
-                const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-                if (!decrypted) {
-                    alert('解密失败，密钥可能错误！');
-                    return;
+        document.addEventListener('DOMContentLoaded', function() {
+            const countdownElement = document.getElementById('countdown');
+            const progressElement = document.getElementById('progress');
+            const manualRedirectBtn = document.getElementById('manualRedirect');
+            const cancelRedirectBtn = document.getElementById('cancelRedirect');
+            
+            let countdown = 0.001; // 倒计时秒数
+            let redirectTimer;
+            let progressInterval;
+            
+            // 更新倒计时显示
+            function updateCountdown() {
+                countdownElement.textContent = countdown;
+                progressElement.style.width = `${(10 - countdown) * 10}%`;
+                
+                if (countdown <= 0) {
+                    clearInterval(redirectTimer);
+                    clearInterval(progressInterval);
+                    window.location.href = manualRedirectBtn.href;
+                } else {
+                    countdown--;
                 }
-                document.getElementById('plaintext').value = decrypted;
-            } catch (e) {
-                alert('解密失败，请检查输入！');
             }
-        }
+            
+            // 开始倒计时
+            redirectTimer = setInterval(updateCountdown, 1000);
+            
+            // 手动跳转按钮
+            manualRedirectBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                clearInterval(redirectTimer);
+                clearInterval(progressInterval);
+                window.location.href = this.href;
+            });
+            
+            // 取消跳转按钮
+            cancelRedirectBtn.addEventListener('click', function() {
+                clearInterval(redirectTimer);
+                clearInterval(progressInterval);
+                countdownElement.textContent = "已取消";
+                progressElement.style.width = "0%";
+                document.querySelector('h1').textContent = "跳转已取消";
+                document.querySelector('p').textContent = "您可以继续浏览当前页面";
+                manualRedirectBtn.textContent = "仍然跳转";
+                this.style.display = "none";
+            });
+        });
     </script>
 </body>
 </html>
